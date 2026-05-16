@@ -15,11 +15,26 @@ MODULE_DESCRIPTION("First Loadable Kernel Module");
     so the compiler no longer expects an external prototype.
 */
 static ssize_t	ProcRead_FSKernel(struct file *, 
-    char __user *, 
-    size_t, loff_t *){           
+    char __user * user_buffer, 
+    size_t len, 
+    loff_t *offset){           
 
-        printk(KERN_ALERT "Read_FSKernel: Inside File Read\n");    
-        return 0;            //Important as there is EOF 
+        printk(KERN_ALERT "Read_FSKernel: Inside File Read\n"); 
+        char bufferToPrint[] = "UART TX Device Write\n";
+        
+        uint8_t bytes_to_read = strlen(bufferToPrint);
+        if(*offset >= bytes_to_read){
+
+            return 0;
+        }
+        uint8_t ret = copy_to_user(user_buffer,
+                     bufferToPrint,
+                     bytes_to_read);
+        // {
+        //     return -EFAULT;
+        // }   
+        *offset += bytes_to_read; 
+        return bytes_to_read;            //Important as there is EOF 
     }
 static const struct proc_ops proc_fops = {
   .proc_read = ProcRead_FSKernel
