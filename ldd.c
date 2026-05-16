@@ -1,5 +1,5 @@
 /*
- Description : Regarding creating proc file and upload
+ Description : Regarding creating proc file,upload & read. 
 */
 #include <linux/init.h>
 #include <linux/module.h>
@@ -10,9 +10,21 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Paras");
 MODULE_DESCRIPTION("First Loadable Kernel Module");
 
+/*
+    static limits visibility of the function to the current source file only, 
+    so the compiler no longer expects an external prototype.
+*/
+static ssize_t	ProcRead_FSKernel(struct file *, 
+    char __user *, 
+    size_t, loff_t *){           
+
+        printk(KERN_ALERT "Read_FSKernel: Inside File Read\n");    
+        return 0;            //Important as there is EOF 
+    }
 static const struct proc_ops proc_fops = {
-  
+  .proc_read = ProcRead_FSKernel
 };
+
 static struct proc_dir_entry *ptrToProcFileInit;
 static int proc_module_init(void)
 {
