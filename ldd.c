@@ -62,6 +62,7 @@ static const struct proc_ops proc_fops = {
   .proc_write = ProcWrite_FSKernel
 };
 
+/* Proc File init*/
 static struct proc_dir_entry *ptrToProcFileInit;
 static int proc_module_init(void)
 {
